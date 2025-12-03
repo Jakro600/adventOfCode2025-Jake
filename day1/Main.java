@@ -1,3 +1,5 @@
+package day1;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 
@@ -10,7 +12,7 @@ class Main {
     static int[] turnResults;
 
     public static void main(String[] args) {
-        String fileName = "resources/" + args[0];
+        String fileName = "resources/day1/" + args[0];
 
         try {
             document = new BufferedReader(new FileReader(fileName));
