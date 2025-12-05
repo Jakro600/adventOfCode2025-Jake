@@ -11,7 +11,7 @@ public class Main {
         String filename = "resources/day3/" + args[0];
         String notedBank;
         ArrayList<String> powerBanks = new ArrayList<>();
-        int totalVoltage = 0;
+        long totalVoltage = 0;
 
         try {
             input = new BufferedReader(new FileReader(filename));
@@ -27,27 +27,26 @@ public class Main {
         }
 
         for(String bank: powerBanks) {
-            int tensVoltage = 1;
-            int onesVoltage = 1;
-            int tensVoltageIndex = 0;
             char[] batteryVoltages = bank.toCharArray();
+            int voltageIndex = -1;
+            StringBuilder bankVoltage = new StringBuilder();
 
-            for(int battery = 0; battery < batteryVoltages.length - 1; battery++) {
-                int batteryVoltage = Character.getNumericValue(batteryVoltages[battery]);
-                if(tensVoltage < batteryVoltage) {
-                    tensVoltage = batteryVoltage;
-                    tensVoltageIndex = battery;
+            for(int batteryNumber = 1; batteryNumber <= 12; batteryNumber++) {
+                int voltage = 1;
+                voltageIndex += 1;
+
+                for(int battery = voltageIndex; battery < batteryVoltages.length - (12 - batteryNumber); battery++) {
+                    int batteryVoltage = Character.getNumericValue(batteryVoltages[battery]);
+                    if(voltage < batteryVoltage) {
+                        voltage = batteryVoltage;
+                        voltageIndex = battery;
+                    }
                 }
-            }
-            for(int battery = tensVoltageIndex + 1; battery < batteryVoltages.length; battery++) {
-                int batteryVoltage = Character.getNumericValue(batteryVoltages[battery]);
-                if(onesVoltage < batteryVoltage) {
-                    onesVoltage = batteryVoltage;
-                }
+
+                bankVoltage.append(voltage);
             }
 
-            int bankVoltage = Integer.parseInt(String.valueOf(tensVoltage) + String.valueOf(onesVoltage));
-            totalVoltage += bankVoltage;
+            totalVoltage += Long.parseLong(bankVoltage.toString());
         }
 
         System.out.println("Total Voltage: " + totalVoltage);
