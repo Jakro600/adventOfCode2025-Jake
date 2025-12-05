@@ -11,7 +11,9 @@ public class Main {
         String filename = "resources/day4/" + args[0];
         String rowRead;
         ArrayList<char[]> map = new ArrayList<>();
-        int accessibleRolls = 0;
+        ArrayList<Integer> rollsToRemoveY = new ArrayList<>();
+        ArrayList<Integer> rollsToRemoveX = new ArrayList<>();
+        int removableRolls = 0;
 
         try {
             input = new BufferedReader(new FileReader(filename));
@@ -26,52 +28,67 @@ public class Main {
             return;
         }
 
-        for(int y = 0; y < map.size(); y++) {
-            char[] row = map.get(y);
+        boolean rollsAccessible = true;
+        while(rollsAccessible) {
+            for(int y = 0; y < map.size(); y++) {
+                char[] row = map.get(y);
 
-            for(int x = 0; x < row.length; x++) {
-                char spot = row[x];
-                int obstructions = 0;
+                for(int x = 0; x < row.length; x++) {
+                    char spot = row[x];
+                    int obstructions = 0;
 
-                if(spot != '@') {
-                    continue;
-                }
-
-                int[] adjacentY = {y - 1, y + 1};
-                int[] adjacentX = {x - 1, x, x + 1};
-
-                for(int adjacentSpot: adjacentX) {
-                    if(adjacentSpot < 0 || adjacentSpot >= row.length || adjacentSpot == x) {
+                    if(spot != '@') {
                         continue;
                     }
 
-                    if(row[adjacentSpot] == '@') {
-                        obstructions++;
-                    }
-                }
+                    int[] adjacentY = {y - 1, y + 1};
+                    int[] adjacentX = {x - 1, x, x + 1};
 
-                for(int adjacentRowIndex: adjacentY) {
-                    if(adjacentRowIndex < 0 || adjacentRowIndex >= map.size()) {
-                        continue;
-                    }
-
-                    for(int adjacentSpotIndex: adjacentX) {
-                        if(adjacentSpotIndex < 0 || adjacentSpotIndex >= row.length) {
+                    for(int adjacentSpot: adjacentX) {
+                        if(adjacentSpot < 0 || adjacentSpot >= row.length || adjacentSpot == x) {
                             continue;
                         }
 
-                        if(map.get(adjacentRowIndex)[adjacentSpotIndex] == '@') {
+                        if(row[adjacentSpot] == '@') {
                             obstructions++;
                         }
                     }
-                }
 
-                if(obstructions < 4) {
-                    accessibleRolls++;
+                    for(int adjacentRowIndex: adjacentY) {
+                        if(adjacentRowIndex < 0 || adjacentRowIndex >= map.size()) {
+                            continue;
+                        }
+
+                        for(int adjacentSpotIndex: adjacentX) {
+                            if(adjacentSpotIndex < 0 || adjacentSpotIndex >= row.length) {
+                                continue;
+                            }
+
+                            if(map.get(adjacentRowIndex)[adjacentSpotIndex] == '@') {
+                                obstructions++;
+                            }
+                        }
+                    }
+
+                    if(obstructions < 4) {
+                        removableRolls++;
+                        rollsToRemoveY.add(y);
+                        rollsToRemoveX.add(x);
+                    }
                 }
+            }
+
+            if(rollsToRemoveY.isEmpty()) {
+                rollsAccessible = false;
+            } else {
+                for(int i = 0; i < rollsToRemoveY.size(); i++) {
+                    map.get(rollsToRemoveY.get(i))[rollsToRemoveX.get(i)] = '.';
+                }
+                rollsToRemoveY.clear();
+                rollsToRemoveX.clear();
             }
         }
 
-        System.out.println("Total Rolls: " + accessibleRolls);
+        System.out.println("Total Rolls Removable: " + removableRolls);
     }
 }
